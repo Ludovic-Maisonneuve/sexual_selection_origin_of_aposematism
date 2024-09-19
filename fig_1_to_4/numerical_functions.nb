@@ -10,573 +10,222 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     24276,        630]
-NotebookOptionsPosition[     23920,        616]
-NotebookOutlinePosition[     24320,        632]
-CellTagsIndexPosition[     24277,        629]
+NotebookDataLength[     12220,        281]
+NotebookOptionsPosition[     11774,        266]
+NotebookOutlinePosition[     12174,        282]
+CellTagsIndexPosition[     12131,        279]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
-Cell[BoxData[{
+Cell["\<\
+The functions in this notebook were written by Arthur Weyna. This notebook \
+contains functions that apply selection gradients iteratively to traits, \
+enabling to simulate evolutionary dynamics.\
+\>", "Text",
+ CellChangeTimes->{{3.9357332617623377`*^9, 3.935733286204186*^9}, {
+  3.935734912744322*^9, 
+  3.935734915331141*^9}},ExpressionUUID->"da01c5df-23ff-43c2-8327-\
+162bbcf20be2"],
+
+Cell[BoxData[
  RowBox[{
-  RowBox[{"NumSeq", "[", 
-   RowBox[{"min_", ",", " ", "max_", ",", " ", "nstep_"}], "]"}], ":=", 
-  RowBox[{"Table", "[", 
-   RowBox[{"x", ",", " ", 
-    RowBox[{"{", 
-     RowBox[{"x", ",", "min", ",", " ", "max", ",", " ", 
-      RowBox[{
-       RowBox[{"(", 
-        RowBox[{"max", "-", "min"}], ")"}], "/", "nstep"}]}], "}"}]}], 
-   "]"}]}], "\[IndentingNewLine]", 
- RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+   "Function", " ", "to", " ", "create", " ", "a", " ", "rule", " ", "for", 
+    " ", "replacing", " ", "elements", " ", 
+    RowBox[{"in", " ", "'"}], 
+    RowBox[{"targets", "'"}], " ", "with", " ", "corresponding", " ", 
+    "elements", " ", 
+    RowBox[{"in", "'"}], 
+    RowBox[{"subs", "'"}]}], "*)"}], "\[IndentingNewLine]", 
   RowBox[{
-   RowBox[{"MakeRule", "[", 
-    RowBox[{"targets_", ",", " ", "subs_"}], "]"}], ":=", 
-   RowBox[{"Map", "[", 
-    RowBox[{
+   RowBox[{
+    RowBox[{"MakeRule", "[", 
+     RowBox[{"targets_", ",", " ", "subs_"}], "]"}], ":=", 
+    RowBox[{"Map", "[", 
      RowBox[{
       RowBox[{
-       RowBox[{"#", "[", 
-        RowBox[{"[", "1", "]"}], "]"}], "\[Rule]", " ", 
-       RowBox[{"#", "[", 
-        RowBox[{"[", "2", "]"}], "]"}]}], "&"}], ",", " ", 
-     RowBox[{"Transpose", "[", 
-      RowBox[{"{", 
-       RowBox[{"targets", ",", " ", "subs"}], "}"}], "]"}]}], "]"}]}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"DropParam", "[", 
-    RowBox[{"params_", ",", " ", "param_"}], "]"}], ":=", 
-   RowBox[{"Drop", "[", 
-    RowBox[{"params", ",", 
-     RowBox[{"First", "[", 
-      RowBox[{"Position", "[", 
        RowBox[{
+        RowBox[{"#", "[", 
+         RowBox[{"[", "1", "]"}], "]"}], "\[Rule]", " ", 
+        RowBox[{"#", "[", 
+         RowBox[{"[", "2", "]"}], "]"}]}], "&"}], ",", " ", 
+      RowBox[{"Transpose", "[", 
+       RowBox[{"{", 
+        RowBox[{"targets", ",", " ", "subs"}], "}"}], "]"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Function", " ", "to", " ", "drop", " ", "a", " ", "parameter", " ", 
+     RowBox[{"from", " ", "'"}], 
+     RowBox[{"params", "'"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"DropParam", "[", 
+     RowBox[{"params_", ",", " ", "param_"}], "]"}], ":=", 
+    RowBox[{"Drop", "[", 
+     RowBox[{"params", ",", 
+      RowBox[{"First", "[", 
+       RowBox[{"Position", "[", 
+        RowBox[{
+         RowBox[{"Map", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"#", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], "&"}], ",", " ", "params"}], 
+          "]"}], ",", " ", "param"}], "]"}], "]"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Function", " ", "to", " ", "iteratively", " ", "apply", " ", "selection",
+      " ", "gradients"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SelGradIterate", "[", 
+     RowBox[{"S_", ",", " ", "traits_", ",", " ", "params_"}], "]"}], ":=", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "vars", ",", "init", ",", "bounds", ",", "Sparams", ",", "G", ",", 
+        "myclip", ",", " ", "newval"}], "}"}], ",", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{"Extract", " ", "the", " ", "variable", " ", "names", " ", 
+        RowBox[{"(", "traits", ")"}], " ", "from", " ", "the", " ", "traits", 
+        " ", "list"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"vars", "=", 
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Extract", " ", "the", " ", "initial", " ", "values", " ", "of", " ", 
+         "the", " ", "traits"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"init", "=", 
         RowBox[{"Map", "[", 
          RowBox[{
           RowBox[{
            RowBox[{"#", "[", 
-            RowBox[{"[", "1", "]"}], "]"}], "&"}], ",", " ", "params"}], 
-         "]"}], ",", " ", "param"}], "]"}], "]"}]}], "]"}]}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"ParamSerialize", "[", 
-    RowBox[{"params_", ",", " ", "param_", ",", " ", "seq_"}], "]"}], ":=", 
-   "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"params2", ",", " ", "paramlist"}], "}"}], ",", 
-     "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"params2", "=", 
-       RowBox[{"Drop", "[", 
-        RowBox[{"params", ",", 
-         RowBox[{"First", "[", 
-          RowBox[{"Position", "[", 
-           RowBox[{
-            RowBox[{"Map", "[", 
-             RowBox[{
-              RowBox[{
-               RowBox[{"#", "[", 
-                RowBox[{"[", "1", "]"}], "]"}], "&"}], ",", " ", "params"}], 
-             "]"}], ",", " ", "param"}], "]"}], "]"}]}], "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"paramlist", "=", 
-       RowBox[{"Map", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], "&"}], ",", " ", "traits"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
         RowBox[{
+        "Extract", " ", "the", " ", "upper", " ", "and", " ", "lower", " ", 
+         "bounds", " ", "for", " ", "each", " ", "trait"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"bounds", "=", 
+        RowBox[{"Map", "[", 
          RowBox[{
-          RowBox[{"Join", "[", 
-           RowBox[{
-            RowBox[{"{", 
-             RowBox[{"param", " ", "\[Rule]", " ", "#"}], "}"}], ",", " ", 
-            "params2"}], "]"}], "&"}], ",", " ", "seq"}], "]"}]}], ";", 
-      "\[IndentingNewLine]", "paramlist"}]}], "]"}]}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"SelGradIterate", "[", 
-    RowBox[{"S_", ",", " ", "traits_", ",", " ", "params_"}], "]"}], ":=", 
-   "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-      "vars", ",", "init", ",", "bounds", ",", "Sparams", ",", "G", ",", 
-       "myclip", ",", " ", "newval"}], "}"}], ",", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"vars", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"init", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"#", "[", 
-           RowBox[{"[", "2", "]"}], "]"}], "&"}], ",", " ", "traits"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"bounds", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"#", "[", 
-           RowBox[{"[", 
-            RowBox[{"{", 
-             RowBox[{"3", ",", "4"}], "}"}], "]"}], "]"}], "&"}], ",", " ", 
-         "traits"}], "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"Sparams", "=", 
-       RowBox[{
-        RowBox[{"S", "/.", "params"}], "//", "Simplify"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"G", "=", 
-       RowBox[{"0.001", " ", 
-        RowBox[{"IdentityMatrix", "[", 
-         RowBox[{"Length", "[", "S", "]"}], "]"}]}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{
-       RowBox[{"myclip", "[", 
-        RowBox[{"val_", ",", " ", "pos_"}], "]"}], ":=", " ", 
-       RowBox[{"Clip", "[", 
-        RowBox[{"val", ",", " ", 
-         RowBox[{"Flatten", "[", 
-          RowBox[{"bounds", "[", 
-           RowBox[{"[", "pos", "]"}], "]"}], "]"}]}], "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{
-       RowBox[{"newval", "[", "val_", "]"}], ":=", " ", 
-       RowBox[{"MapIndexed", "[", 
-        RowBox[{"myclip", ",", " ", 
-         RowBox[{"val", "+", 
-          RowBox[{"G", ".", 
-           RowBox[{"(", 
-            RowBox[{"Sparams", "/.", 
-             RowBox[{"MakeRule", "[", 
-              RowBox[{"vars", ",", " ", "val"}], "]"}]}], ")"}]}]}]}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"NestWhileList", "[", 
-       RowBox[{"newval", ",", "init", ",", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"EuclideanDistance", "[", 
-           RowBox[{"#1", ",", "#2"}], "]"}], ">", 
-          RowBox[{"10", "^", 
-           RowBox[{"-", "5"}]}]}], "&"}], ",", "2", ",", "1000000"}], 
-       "]"}]}]}], "]"}]}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"SelGradIterateFor", "[", 
-    RowBox[{"S_", ",", " ", "traits_", ",", " ", "params_", ",", " ", "n_"}], 
-    "]"}], ":=", "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-      "vars", ",", "init", ",", "bounds", ",", "Sparams", ",", "G", ",", 
-       "myclip", ",", " ", "newval"}], "}"}], ",", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"vars", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"init", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"#", "[", 
-           RowBox[{"[", "2", "]"}], "]"}], "&"}], ",", " ", "traits"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"bounds", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"#", "[", 
-           RowBox[{"[", 
-            RowBox[{"{", 
-             RowBox[{"3", ",", "4"}], "}"}], "]"}], "]"}], "&"}], ",", " ", 
-         "traits"}], "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"Sparams", "=", 
-       RowBox[{
-        RowBox[{"S", "/.", "params"}], "//", "Simplify"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"G", "=", 
-       RowBox[{"0.001", " ", 
-        RowBox[{"IdentityMatrix", "[", 
-         RowBox[{"Length", "[", "vars", "]"}], "]"}]}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{
-       RowBox[{"myclip", "[", 
-        RowBox[{"val_", ",", " ", "pos_"}], "]"}], ":=", " ", 
-       RowBox[{"Clip", "[", 
-        RowBox[{"val", ",", " ", 
-         RowBox[{"Flatten", "[", 
-          RowBox[{"bounds", "[", 
-           RowBox[{"[", "pos", "]"}], "]"}], "]"}]}], "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{
-       RowBox[{"newval", "[", "val_", "]"}], ":=", " ", 
-       RowBox[{"MapIndexed", "[", 
-        RowBox[{"myclip", ",", " ", 
-         RowBox[{"val", "+", 
-          RowBox[{"G", ".", 
-           RowBox[{"(", 
-            RowBox[{"Sparams", "/.", 
-             RowBox[{"MakeRule", "[", 
-              RowBox[{"vars", ",", " ", "val"}], "]"}]}], ")"}]}]}]}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"NestList", "[", 
-       RowBox[{"newval", ",", "init", ",", "n"}], "]"}]}]}], "]"}]}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"GetReachedStrat", "[", 
-    RowBox[{"S_", ",", " ", "traits_", ",", " ", "params_"}], "]"}], ":=", 
-   "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", "timedyn", "}"}], ",", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"timedyn", " ", "=", " ", 
-       RowBox[{"SelGradIterate", "[", 
-        RowBox[{"S", ",", " ", "traits", ",", " ", "params"}], "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"Last", "[", "timedyn", "]"}]}]}], "]"}]}], 
-  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"PlotDyn", "[", 
-    RowBox[{"S_", ",", " ", "traits_", ",", " ", "params_", ",", "style_"}], 
-    "]"}], ":=", "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"vars", ",", "timedyn"}], "}"}], ",", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"vars", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
-         RowBox[{
-          RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"timedyn", " ", "=", " ", 
-       RowBox[{"SelGradIterate", "[", 
-        RowBox[{"S", ",", " ", "traits", ",", " ", "params"}], "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"TableDyn", "=", 
-       RowBox[{"Table", "[", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"t", ",", 
-           RowBox[{"timedyn", "[", 
+          RowBox[{
+           RowBox[{"#", "[", 
             RowBox[{"[", 
-             RowBox[{"t", ",", "i"}], "]"}], "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"i", ",", "1", ",", 
-           RowBox[{"Length", "[", "S", "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"t", ",", " ", "1", ",", " ", 
-           RowBox[{
-            RowBox[{"Dimensions", "[", "timedyn", "]"}], "[", 
-            RowBox[{"[", "1", "]"}], "]"}]}], "}"}]}], "]"}]}], ";", 
-      "\[IndentingNewLine]", " ", 
-      RowBox[{"ListPlot", "[", 
-       RowBox[{"TableDyn", ",", " ", 
-        RowBox[{"PlotLegends", "\[Rule]", "vars"}], ",", 
-        RowBox[{"LabelStyle", "\[Rule]", "style"}], ",", 
-        RowBox[{"PlotRange", "\[Rule]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"0", ",", "All"}], "}"}], ",", 
-           RowBox[{"{", 
-            RowBox[{"0", ",", " ", "All"}], "}"}]}], "}"}]}]}], "]"}]}]}], 
-    "]"}]}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"PlotDynFor", "[", 
-    RowBox[{
-    "S_", ",", " ", "traits_", ",", " ", "params_", ",", "style_", ",", 
-     "n_"}], "]"}], ":=", "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"vars", ",", "timedyn"}], "}"}], ",", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"vars", "=", 
-       RowBox[{"Map", "[", 
+             RowBox[{"{", 
+              RowBox[{"3", ",", "4"}], "}"}], "]"}], "]"}], "&"}], ",", " ", 
+          "traits"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Substitute", " ", "the", " ", "parameters", " ", "into", " ", "the", 
+         " ", "selection", " ", 
+         RowBox[{"gradient", "'"}], 
+         RowBox[{"S", "'"}], " ", "and", " ", "simplify"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"Sparams", "=", 
+        RowBox[{
+         RowBox[{"S", "/.", "params"}], "//", "Simplify"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"Define", " ", "mutation", " ", "matrix"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"G", "=", 
+        RowBox[{"0.001", " ", 
+         RowBox[{"IdentityMatrix", "[", 
+          RowBox[{"Length", "[", "S", "]"}], "]"}]}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Define", " ", "a", " ", "function", " ", "to", " ", "clip", " ", 
+         "values", " ", "within", " ", "the", " ", "defined", " ", "bounds"}],
+         "*)"}], "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"myclip", "[", 
+         RowBox[{"val_", ",", " ", "pos_"}], "]"}], ":=", " ", 
+        RowBox[{"Clip", "[", 
+         RowBox[{"val", ",", " ", 
+          RowBox[{"Flatten", "[", 
+           RowBox[{"bounds", "[", 
+            RowBox[{"[", "pos", "]"}], "]"}], "]"}]}], "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Define", " ", "a", " ", "function", " ", "to", " ", "compute", " ", 
+         "the", " ", "new", " ", "trait", " ", "values", " ", "after", " ", 
+         "one", " ", "iteration", " ", "of", " ", "the", " ", "selection", 
+         " ", "gradients"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"newval", "[", "val_", "]"}], ":=", " ", 
+        RowBox[{"MapIndexed", "[", 
+         RowBox[{"myclip", ",", " ", 
+          RowBox[{"val", "+", 
+           RowBox[{"G", ".", 
+            RowBox[{"(", 
+             RowBox[{"Sparams", "/.", 
+              RowBox[{"MakeRule", "[", 
+               RowBox[{"vars", ",", " ", "val"}], "]"}]}], ")"}]}]}]}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
         RowBox[{
          RowBox[{
-          RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"timedyn", " ", "=", " ", 
-       RowBox[{"SelGradIterateFor", "[", 
-        RowBox[{"S", ",", " ", "traits", ",", " ", "params", ",", "n"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"TableDyn", "=", 
-       RowBox[{"Table", "[", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"t", ",", 
-           RowBox[{"timedyn", "[", 
-            RowBox[{"[", 
-             RowBox[{"t", ",", "i"}], "]"}], "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"i", ",", "1", ",", 
-           RowBox[{"Length", "[", "S", "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"t", ",", " ", "1", ",", " ", 
-           RowBox[{
-            RowBox[{"Dimensions", "[", "timedyn", "]"}], "[", 
-            RowBox[{"[", "1", "]"}], "]"}]}], "}"}]}], "]"}]}], ";", 
-      "\[IndentingNewLine]", " ", 
-      RowBox[{"ListPlot", "[", 
-       RowBox[{"TableDyn", ",", " ", 
-        RowBox[{"PlotLegends", "\[Rule]", "vars"}], ",", 
-        RowBox[{"LabelStyle", "\[Rule]", "style"}], ",", 
-        RowBox[{"PlotRange", "\[Rule]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"0", ",", "All"}], "}"}], ",", 
-           RowBox[{"{", 
-            RowBox[{"0", ",", " ", "All"}], "}"}]}], "}"}]}]}], "]"}]}]}], 
-    "]"}]}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"PlotDynTwoStep", "[", 
-    RowBox[{"S_", ",", " ", "params_", ",", "style_"}], "]"}], ":=", 
-   "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"vars", ",", "timedyn", ",", " ", "S1"}], "}"}], ",", 
-     "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"S1", "=", "S"}], ";", "\[IndentingNewLine]", 
-      RowBox[{
-       RowBox[{"S1", "[", 
-        RowBox[{"[", "2", "]"}], "]"}], "=", "0"}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"timedyn1", " ", "=", 
-       RowBox[{"SelGradIterateFor", "[", 
-        RowBox[{"S1", ",", " ", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"s", ",", "0", ",", "0", ",", "1000"}], "}"}], ",", " ", 
-           RowBox[{"{", 
-            RowBox[{"d", ",", "0", ",", "0", ",", "1000"}], "}"}]}], "}"}], 
-         ",", " ", "params", ",", " ", "5000"}], "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"timedyn2", "=", 
-       RowBox[{"SelGradIterateFor", "[", 
-        RowBox[{"S", ",", " ", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"s", ",", 
-             RowBox[{
-              RowBox[{"Last", "[", "timedyn1", "]"}], "[", 
-              RowBox[{"[", "1", "]"}], "]"}], ",", "0", ",", "1000"}], "}"}], 
-           ",", " ", 
-           RowBox[{"{", 
-            RowBox[{"d", ",", "0", ",", "0", ",", "1000"}], "}"}]}], "}"}], 
-         ",", " ", "params", ",", " ", "5000"}], "]"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"TableDyn", "=", 
-       RowBox[{"Table", "[", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"t", ",", 
-           RowBox[{"If", "[", 
-            RowBox[{
-             RowBox[{"t", "<=", "1000"}], ",", 
-             RowBox[{"timedyn1", "[", 
-              RowBox[{"[", 
-               RowBox[{"t", ",", "i"}], "]"}], "]"}], ",", 
-             RowBox[{"timedyn2", "[", 
-              RowBox[{"[", 
-               RowBox[{
-                RowBox[{"t", "-", "1000"}], ",", "i"}], "]"}], "]"}]}], 
-            "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"i", ",", "1", ",", 
-           RowBox[{"Length", "[", "S", "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"t", ",", " ", "1", ",", " ", "2000"}], "}"}]}], "]"}]}], 
-      ";", "\[IndentingNewLine]", " ", 
-      RowBox[{"ListPlot", "[", 
-       RowBox[{"TableDyn", ",", " ", 
-        RowBox[{"PlotLegends", "\[Rule]", 
-         RowBox[{"{", 
-          RowBox[{"\"\<s\>\"", ",", "\"\<d\>\""}], "}"}]}], ",", 
-        RowBox[{"LabelStyle", "\[Rule]", "style"}], ",", 
-        RowBox[{"PlotRange", "\[Rule]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"{", 
-            RowBox[{"0", ",", "All"}], "}"}], ",", 
-           RowBox[{"{", 
-            RowBox[{"0", ",", " ", "All"}], "}"}]}], "}"}]}]}], "]"}]}]}], 
-    "]"}]}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{
-   RowBox[{"GetParamImpact", "[", 
-    RowBox[{
-    "S_", ",", "H_", ",", " ", "traits_", ",", " ", "params_", ",", " ", 
-     "param_"}], "]"}], ":=", "\[IndentingNewLine]", 
-   RowBox[{"Module", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
-      "vars", ",", "par", ",", "paramsDrop", ",", " ", "data", ",", "dataH", 
-       ",", " ", "imax", ",", " ", "array", ",", " ", "datatraits"}], "}"}], 
-     ",", "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"vars", "=", 
-       RowBox[{"Map", "[", 
-        RowBox[{
+         "Iterate", " ", "the", " ", "selection", " ", "gradient", " ", 
+          "update", " ", "until", " ", "the", " ", "difference", " ", 
+          "between", " ", "consecutive", " ", "trait", " ", "values", " ", 
+          "is", " ", "sufficiently", " ", "small", " ", 
+          RowBox[{"(", 
+           RowBox[{"10", "^", 
+            RowBox[{"-", "6"}]}], ")"}], " ", "or", " ", "a", " ", "maximum", 
+          " ", "of", " ", "1"}], ",", "000", ",", 
+         RowBox[{"000", " ", "iterations", " ", "is", " ", "reached"}]}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"NestWhileList", "[", 
+        RowBox[{"newval", ",", "init", ",", 
          RowBox[{
-          RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
-        "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"par", "=", 
-       RowBox[{"param", "[", 
-        RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"paramsDrop", "=", 
-       RowBox[{"DropParam", "[", 
-        RowBox[{"params", ",", "par"}], "]"}]}], ";", "\[IndentingNewLine]", 
-      RowBox[{"data", " ", "=", " ", 
-       RowBox[{"Table", "[", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"pp", ",", 
-           RowBox[{
-            RowBox[{"GetReachedStrat", "[", 
-             RowBox[{"S", ",", " ", "traits", ",", "  ", 
-              RowBox[{"Insert", "[", 
-               RowBox[{"paramsDrop", ",", 
-                RowBox[{"par", "\[Rule]", "pp"}], ",", 
-                RowBox[{"-", "1"}]}], "]"}]}], "]"}], "[", 
-            RowBox[{"[", "i", "]"}], "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"i", ",", "1", ",", 
-           RowBox[{"Length", "[", "S", "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"pp", ",", 
-           RowBox[{"param", "[", 
-            RowBox[{"[", "2", "]"}], "]"}], ",", 
-           RowBox[{"param", "[", 
-            RowBox[{"[", "3", "]"}], "]"}], ",", 
-           RowBox[{"param", "[", 
-            RowBox[{"[", "4", "]"}], "]"}]}], "}"}]}], "]"}]}], ";", 
-      "\[IndentingNewLine]", "\[IndentingNewLine]", 
-      RowBox[{"imax", " ", "=", " ", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"(", 
           RowBox[{
-           RowBox[{"param", "[", 
-            RowBox[{"[", "3", "]"}], "]"}], "-", 
-           RowBox[{"param", "[", 
-            RowBox[{"[", "2", "]"}], "]"}]}], ")"}], "/", 
-         RowBox[{"param", "[", 
-          RowBox[{"[", "4", "]"}], "]"}]}], "+", "1"}]}], ";", 
-      "\[IndentingNewLine]", 
-      RowBox[{"array", "=", 
-       RowBox[{"Table", "[", 
-        RowBox[{"par", ",", "param"}], "]"}]}], ";", "\[IndentingNewLine]", 
-      "\[IndentingNewLine]", 
-      RowBox[{"dataH", " ", "=", 
-       RowBox[{"Table", "[", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"array", "[", 
-            RowBox[{"[", "i", "]"}], "]"}], ",", 
-           RowBox[{"Max", "[", 
-            RowBox[{"Eigenvalues", "[", 
-             RowBox[{"Simplify", "[", 
-              RowBox[{
-               RowBox[{
-                RowBox[{"H", "/.", "paramsDrop"}], "/.", 
-                RowBox[{"MakeRule", "[", 
-                 RowBox[{"vars", ",", 
-                  RowBox[{"data", "[", 
-                   RowBox[{"[", 
-                    RowBox[{"All", ",", "i", ",", "2"}], "]"}], "]"}]}], 
-                 "]"}]}], "/.", 
-               RowBox[{"{", 
-                RowBox[{"par", "\[Rule]", 
-                 RowBox[{"array", "[", 
-                  RowBox[{"[", "i", "]"}], "]"}]}], "}"}]}], "]"}], "]"}], 
-            "]"}]}], "}"}], ",", 
-         RowBox[{"{", 
-          RowBox[{"i", ",", "1", ",", "imax", ",", "1"}], "}"}]}], "]"}]}], 
-      ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
-      RowBox[{"{", 
-       RowBox[{"data", ",", "dataH"}], "}"}]}]}], "\[IndentingNewLine]", 
-    "]"}]}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"PlotParamImpact", "[", 
-   RowBox[{
-   "S_", ",", " ", "H_", ",", "traits_", ",", " ", "params_", ",", " ", 
-    "param_"}], "]"}], ":=", "\[IndentingNewLine]", 
-  RowBox[{"Module", "[", 
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{
-     "vars", ",", "Listdata", ",", "data", ",", " ", "dataH", ",", " ", "p1", 
-      ",", " ", "p2"}], "}"}], ",", "\[IndentingNewLine]", 
+           RowBox[{"EuclideanDistance", "[", 
+            RowBox[{"#1", ",", "#2"}], "]"}], ">", 
+           RowBox[{"10", "^", 
+            RowBox[{"-", "6"}]}]}], "&"}], ",", "2", ",", "1000000"}], 
+        "]"}]}]}], "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
     RowBox[{
-     RowBox[{"vars", "=", 
-      RowBox[{"Map", "[", 
+    "Function", " ", "to", " ", "obtain", " ", "the", " ", "final", " ", 
+     "trait", " ", "values", " ", "reached", " ", "after", " ", "selection", 
+     " ", "gradient", " ", "iterations"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"GetReachedStrat", "[", 
+     RowBox[{"S_", ",", " ", "traits_", ",", " ", "params_"}], "]"}], ":=", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", "timedyn", "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
        RowBox[{
+       "Perform", " ", "the", " ", "iterative", " ", "selection", " ", 
+        "gradient", " ", "process"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"timedyn", " ", "=", " ", 
+        RowBox[{"SelGradIterate", "[", 
+         RowBox[{"S", ",", " ", "traits", ",", " ", "params"}], "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
         RowBox[{
-         RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
-       "]"}]}], ";", "\[IndentingNewLine]", 
-     RowBox[{"Listdata", " ", "=", " ", 
-      RowBox[{"GetParamImpact", "[", 
-       RowBox[{
-       "S", ",", " ", "H", ",", "traits", ",", " ", "params", ",", " ", 
-        "param"}], "]"}]}], ";", "\[IndentingNewLine]", 
-     RowBox[{"data", "=", 
-      RowBox[{"Listdata", "[", 
-       RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
-     RowBox[{"dataH", "=", 
-      RowBox[{"Listdata", "[", 
-       RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
-     RowBox[{"p1", "=", 
-      RowBox[{"ListPlot", "[", 
-       RowBox[{"data", ",", 
-        RowBox[{"PlotLegends", "\[Rule]", "vars"}], ",", 
-        RowBox[{"AxesLabel", "\[Rule]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"param", "[", 
-            RowBox[{"[", "1", "]"}], "]"}], ",", "\"\<traits\>\""}], 
-          "}"}]}]}], "]"}]}], ";", "\[IndentingNewLine]", 
-     RowBox[{"p2", "=", 
-      RowBox[{"ListPlot", "[", 
-       RowBox[{"dataH", ",", 
-        RowBox[{"AxesLabel", "\[Rule]", 
-         RowBox[{"{", 
-          RowBox[{
-           RowBox[{"param", "[", 
-            RowBox[{"[", "1", "]"}], "]"}], ",", 
-           "\"\<Leading eigenvalue H\>\""}], "}"}]}]}], "]"}]}], ";", 
-     "\[IndentingNewLine]", 
-     RowBox[{"GraphicsRow", "[", 
-      RowBox[{"{", 
-       RowBox[{"p1", ",", "p2"}], "}"}], "]"}]}]}], "\[IndentingNewLine]", 
-   "]"}]}]}], "Input",
+        "Return", " ", "the", " ", "last", " ", "set", " ", "of", " ", 
+         "trait", " ", "values"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"Last", "[", "timedyn", "]"}]}]}], "]"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]"}]}]], "Input",
  CellChangeTimes->{{3.904893336918106*^9, 3.904893364842763*^9}, {
    3.904903832903755*^9, 3.90490383343701*^9}, {3.9053255763749113`*^9, 
    3.905325593365987*^9}, {3.9053289796797*^9, 3.90532899808144*^9}, {
@@ -610,8 +259,9 @@ Cell[BoxData[{
    3.925278153393824*^9, 3.9252781711633587`*^9}, {3.9331683523144493`*^9, 
    3.933168353010497*^9}, {3.933168595941081*^9, 3.933168600838784*^9}, {
    3.9331686616530447`*^9, 3.9331686624548817`*^9}, {3.933168696076453*^9, 
-   3.933168696496645*^9}, {3.934625491492836*^9, 
-   3.9346255103549747`*^9}},ExpressionUUID->"566f8f1a-1f53-4652-bdeb-\
+   3.933168696496645*^9}, {3.934625491492836*^9, 3.9346255103549747`*^9}, {
+   3.935726491317664*^9, 3.935726574435974*^9}, {3.935726674637085*^9, 
+   3.9357269159714537`*^9}},ExpressionUUID->"566f8f1a-1f53-4652-bdeb-\
 db47045c6e65"]
 },
 WindowSize->{1512, 831},
@@ -631,7 +281,8 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 23358, 594, 2536, "Input",ExpressionUUID->"566f8f1a-1f53-4652-bdeb-db47045c6e65"]
+Cell[558, 20, 396, 8, 35, "Text",ExpressionUUID->"da01c5df-23ff-43c2-8327-162bbcf20be2"],
+Cell[957, 30, 10813, 234, 1108, "Input",ExpressionUUID->"566f8f1a-1f53-4652-bdeb-db47045c6e65"]
 }
 ]
 *)
