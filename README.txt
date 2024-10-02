@@ -1,7 +1,7 @@
 
 Programs for the Preprint Article: "The Sexual Selection Hypothesis for the Origin of Aposematism"
 Authors: Ludovic Maisonneuve, Thomas Aubier
-DOI: [Link to be added]
+DOI: https://doi.org/10.1101/2024.09.26.615118
 
 This repository contains scripts related to the preprint article by Maisonneuve and Aubier, with contributions from Arthur Weyna. The scripts generate figures and tables found in the article.
 
