@@ -29,21 +29,17 @@ def get_S(X, args):
     PEf = 1 - np.exp(- betaE * df)
     PEm = 1 - np.exp(- betaE * dm)
 
-    # Compute the female and male probability of not being killed by a predator
-    Pof = 1 - p + p * ((1 - PDf) + PDf * (1 - PAf + PAf * PEf))
-    Pom = 1 - p + p * ((1 - PDm) + PDm * (1 - PAm + PAm * PEm))
-
     # Calculate the male reproductive sucess
     Rm = R0 + (1 - R0) * (1 - np.exp(- rho * sm))
 
     # Calculate the selection gradients for each trait
     s_sf = - gamma_cs1 - 2 * gamma_cs2 * sf \
-           + p / Pof * (- betaD * (1 - PDf) * (1 - PEf) * PAf + (1 - theta) * betaN * (1 - PNf) * PDf * (1 - PEf))
+           + p * (- betaD * (1 - PDf) * (1 - PEf) * PAf + (1 - theta) * betaN * (1 - PNf) * PDf * (1 - PEf))
     s_df = - gamma_cd1 - 2 * gamma_cd2 * df \
-           + p / Pof * (betaE * PDf * (1 - PEf) * PAf)
-    s_sm = 1 / (Rm) * (1 - R0) * rho * np.exp(- rho * sm) - gamma_cs1 - 2 * gamma_cs2 * sm + p / Pom * (
+           + p * (betaE * PDf * (1 - PEf) * PAf)
+    s_sm = 1 / (Rm) * (1 - R0) * rho * np.exp(- rho * sm) - gamma_cs1 - 2 * gamma_cs2 * sm + p * (
             - betaD * (1 - PDm) * (1 - PEm) * PAm + (1 - theta) * betaN * (1 - PNm) * PDm * (1 - PEm))
-    s_dm = - gamma_cd1 - 2 * gamma_cd2 * dm + p / Pom * (betaE * PDm * (1 - PEm) * PAm)
+    s_dm = - gamma_cd1 - 2 * gamma_cd2 * dm + p * (betaE * PDm * (1 - PEm) * PAm)
 
     # Return the selection gradients
     return np.array([s_sf / 2, s_df / 2, s_sm / 2, s_dm / 2])
@@ -64,24 +60,21 @@ def get_S_mono(X, args):
     PL = 1 - np.exp(- betaL * d)
 
     # Proportion of naive predators
-    theta = l / (p * (PD * PN * PL) + l)
+    theta = p * PD * PN * PL / (p * PD * PN * PL + l)
 
     # Compute the probability that a predator attacks a prey
-    PA = (1 - PN) + PN * theta
+    PA = (1 - PN) + PN * (1-theta)
 
     # Compute the probability that a prey escape after an attack
     PE = 1 - np.exp(- betaE * d)
-
-    # Compute the female and male probability of not being killed by a predator
-    Po = 1 - p + p * ((1 - PD) + PD * (1 - PA + PA * PE))
 
     # Calculate the male reproductive sucess
     R = R0 + (1 - R0) * (1 - np.exp(- rho * s))
 
     # Calculate the selection gradients for each trait
-    s_s = 1 / (R) * (1 - R0) * rho * np.exp(- rho * s) / 2 - gamma_cs1 - 2 * gamma_cs2 * s + p / Po * (
+    s_s = 1 / (R) * (1 - R0) * rho * np.exp(- rho * s) / 2 - gamma_cs1 - 2 * gamma_cs2 * s + p * (
             - betaD * (1 - PD) * (1 - PE) * PA + (1 - theta) * betaN * (1 - PN) * PD * (1 - PE))
-    s_d = - gamma_cd1 - 2 * gamma_cd2 * d + p / Po * (betaE * PD * (1 - PE) * PA)
+    s_d = - gamma_cd1 - 2 * gamma_cd2 * d + p * betaE * PD * (1 - PE) * PA
 
     # Return the selection gradients
     return np.array([s_s, s_d])

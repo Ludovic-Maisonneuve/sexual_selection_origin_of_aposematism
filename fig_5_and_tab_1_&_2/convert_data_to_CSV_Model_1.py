@@ -55,7 +55,7 @@ for file_name in list_file_name:
             PE = 1 - np.exp(- betaE * d)
 
             # Probability a prey gets killed by predators
-            P_killed = p * PD * PA * (1 - PE)
+            P_killed = 1 - np.exp(-p * PD * PA * (1 - PE))
 
             data.append(
                 [gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, R0, s, d,

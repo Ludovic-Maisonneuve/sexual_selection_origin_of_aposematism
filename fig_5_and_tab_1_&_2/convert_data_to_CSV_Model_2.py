@@ -76,8 +76,8 @@ for file_name in list_file_name:
             PEm = 1 - np.exp(- betaE * dm)
 
             # Probability a male and a female gets killed by predators
-            P_killed_male = p * PDm * PAm * (1 - PEm)
-            P_killed_female = p * PDf * PAf * (1 - PEf)
+            P_killed_male = 1 - np.exp(-p * PDm * PAm * (1 - PEm))
+            P_killed_female =1 - np.exp(-p * PDf * PAf * (1 - PEf))
 
             data.append(
                 [gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, R0, sf, df, sm,
