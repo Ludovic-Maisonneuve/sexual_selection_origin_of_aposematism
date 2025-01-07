@@ -12,9 +12,9 @@ if not os.path.exists(data_folder):
     os.makedirs(data_folder)
 
 # Specify the file name to save BRUTresults. You can run multiple files in parallel by updating the number in the file name.
-name_file = 'results_Model_1_1'
+name_file = 'results_Model_1_X'
 # Set the total number of runs
-n_runs = 100000
+n_runs = 1000
 
 # Start measuring time
 start_time = time.time()
@@ -33,10 +33,9 @@ for i in range(n_runs):
     l = np.exp(random.uniform(-2, 2) * np.log(10))
     rho = np.exp(random.uniform(-2, 2) * np.log(10))
     PD0 = random.uniform(0, 1)
-    p = random.uniform(0, 0.5)
-    R0 = random.uniform(0, 1)
+    p = np.exp(random.uniform(-2, 2) * np.log(10))
 
-    args = (gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, R0)
+    args = (gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p)
 
     # Calculate equilibrium strategy
     X = get_equilibrium_strategy_mono(args)
@@ -45,7 +44,7 @@ for i in range(n_runs):
     save_run_Model_1(X, args, name_file)
 
     # Print the number of runs every 100 runs
-    if (i + 1) % 1 == 0:
+    if (i + 1) % 100 == 0:
         # End measuring time
         end_time = time.time()
         elapsed_time = end_time - start_time

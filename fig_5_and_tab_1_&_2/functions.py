@@ -4,7 +4,7 @@ import numpy as np
 def get_S(X, args):
     # Unpack input variables
     sf, df, sm, dm = X
-    gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, R0 = args
+    gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p = args
 
     # Compute the probability of being detected for females and males
     PDf = PD0 + (1 - PD0) * (1 - np.exp(- betaD * sf))
@@ -29,15 +29,12 @@ def get_S(X, args):
     PEf = 1 - np.exp(- betaE * df)
     PEm = 1 - np.exp(- betaE * dm)
 
-    # Calculate the male reproductive sucess
-    Rm = R0 + (1 - R0) * (1 - np.exp(- rho * sm))
-
     # Calculate the selection gradients for each trait
     s_sf = - gamma_cs1 - 2 * gamma_cs2 * sf \
            + p * (- betaD * (1 - PDf) * (1 - PEf) * PAf + (1 - theta) * betaN * (1 - PNf) * PDf * (1 - PEf))
     s_df = - gamma_cd1 - 2 * gamma_cd2 * df \
            + p * (betaE * PDf * (1 - PEf) * PAf)
-    s_sm = 1 / (Rm) * (1 - R0) * rho * np.exp(- rho * sm) - gamma_cs1 - 2 * gamma_cs2 * sm + p * (
+    s_sm = rho / 2 - gamma_cs1 - 2 * gamma_cs2 * sm + p * (
             - betaD * (1 - PDm) * (1 - PEm) * PAm + (1 - theta) * betaN * (1 - PNm) * PDm * (1 - PEm))
     s_dm = - gamma_cd1 - 2 * gamma_cd2 * dm + p * (betaE * PDm * (1 - PEm) * PAm)
 
@@ -48,7 +45,7 @@ def get_S(X, args):
 def get_S_mono(X, args):
     # Unpack input variables
     s, d = X
-    gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, R0 = args
+    gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p = args
 
     # Compute the probability of being detected
     PD = PD0 + (1 - PD0) * (1 - np.exp(- betaD * s))
@@ -68,11 +65,8 @@ def get_S_mono(X, args):
     # Compute the probability that a prey escape after an attack
     PE = 1 - np.exp(- betaE * d)
 
-    # Calculate the male reproductive sucess
-    R = R0 + (1 - R0) * (1 - np.exp(- rho * s))
-
     # Calculate the selection gradients for each trait
-    s_s = 1 / (R) * (1 - R0) * rho * np.exp(- rho * s) / 2 - gamma_cs1 - 2 * gamma_cs2 * s + p * (
+    s_s = rho / 4 - gamma_cs1 - 2 * gamma_cs2 * s + p * (
             - betaD * (1 - PD) * (1 - PE) * PA + (1 - theta) * betaN * (1 - PN) * PD * (1 - PE))
     s_d = - gamma_cd1 - 2 * gamma_cd2 * d + p * betaE * PD * (1 - PE) * PA
 
@@ -181,8 +175,7 @@ def save_run_Model_2(X, args, name_file):
             'l=' + str(args[8]) + ' ' +
             'rho=' + str(args[9]) + ' ' +
             'PD0=' + str(args[10]) + ' ' +
-            'p=' + str(args[11]) + ' ' +
-            'R0=' + str(args[12]) + ' ' +  # Argument names and values
+            'p=' + str(args[11]) + ' ' + # Argument names and values
 
             'sf=' + str(X[0]) + ' ' +
             'df=' + str(X[1]) + ' ' +
@@ -215,8 +208,7 @@ def save_run_Model_1(X, args, name_file):
             'l=' + str(args[8]) + ' ' +
             'rho=' + str(args[9]) + ' ' +
             'PD0=' + str(args[10]) + ' ' +
-            'p=' + str(args[11]) + ' ' +
-            'R0=' + str(args[12]) + ' ' +  # Argument names and values
+            'p=' + str(args[11]) + ' ' + # Argument names and values
 
             's=' + str(X[0]) + ' ' +
             'd=' + str(X[1]) + ' '

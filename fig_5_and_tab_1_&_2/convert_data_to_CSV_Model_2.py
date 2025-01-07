@@ -16,7 +16,7 @@ header = ['gamma_cs1', 'gamma_cs2', 'gamma_cd1', 'gamma_cd2', 'betaD', 'betaN', 
           'p', 'R0', 'sf', 'df', 'sm', 'dm', 'LSDs', 'LSDd', 'Theta', 'P_killed_male', 'P_killed_female']
 data = []
 
-list_file_name = ['results/BRUTresults/results_Model_2_' + str(i) for i in range(1, 11)]
+list_file_name = ['results/BRUTresults/results_Model_2_' + str(i) for i in range(1, 7)]
 # Adjust the range based on the number of results files you have
 
 for file_name in list_file_name:
@@ -42,11 +42,10 @@ for file_name in list_file_name:
             rho = float(list_sym_value[9].split('=')[1])
             PD0 = float(list_sym_value[10].split('=')[1])
             p = float(list_sym_value[11].split('=')[1])
-            R0 = float(list_sym_value[12].split('=')[1])
-            sf = float(list_sym_value[13].split('=')[1])
-            df = float(list_sym_value[14].split('=')[1])
-            sm = float(list_sym_value[15].split('=')[1])
-            dm = float(list_sym_value[16].split('=')[1][:-1])
+            sf = float(list_sym_value[12].split('=')[1])
+            df = float(list_sym_value[13].split('=')[1])
+            sm = float(list_sym_value[14].split('=')[1])
+            dm = float(list_sym_value[15].split('=')[1][:-1])
             LSDs = level_of_sexual_dimophism(sf, sm)
             LSDd = level_of_sexual_dimophism(df, dm)
 

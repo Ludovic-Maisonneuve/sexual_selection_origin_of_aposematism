@@ -6,7 +6,7 @@ header = ['gamma_cs1', 'gamma_cs2', 'gamma_cd1', 'gamma_cd2', 'betaD', 'betaN', 
           'p', 'R0', 's', 'd', 'theta', 'P_killed']
 data = []
 
-list_file_name = ['results/BRUTresults/results_Model_1_' + str(i) for i in range(1, 11)]
+list_file_name = ['results/BRUTresults/results_Model_1_' + str(i) for i in range(1, 7)]
 # Adjust the range based on the number of results files you have
 
 for file_name in list_file_name:
@@ -30,11 +30,10 @@ for file_name in list_file_name:
             rho = float(list_sym_value[9].split('=')[1])
             PD0 = float(list_sym_value[10].split('=')[1])
             p = float(list_sym_value[11].split('=')[1])
-            R0 = float(list_sym_value[12].split('=')[1])
-            s = float(list_sym_value[13].split('=')[1])
-            d = float(list_sym_value[14].split('=')[1])
+            s = float(list_sym_value[12].split('=')[1])
+            d = float(list_sym_value[13].split('=')[1])
 
-            ancestrally_defended = (p * PD0 * betaE) / (1 - p + p * (1 - PD0)) > gamma_cd1
+            ancestrally_defended = (p * PD0 * betaE) > gamma_cd1
 
             # Compute the probability of being detected
             PD = PD0 + (1 - PD0) * (1 - np.exp(- betaD * s))

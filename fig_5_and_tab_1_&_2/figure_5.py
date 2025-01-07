@@ -13,7 +13,7 @@ if not os.path.exists('figures'):
     os.makedirs('figures')
 
 plt.figure()
-plot = sns.lmplot(x="rho", y="Theta", logx=True, data=data, scatter_kws={'s': 2.5, 'alpha': 0.75, 'color': 'grey'},
+plot = sns.lmplot(x="rho", y="Theta", logx=True, data=data, scatter_kws={'s': 5, 'alpha': 0.5, 'color': 'grey'},
                   aspect=1.5)
 plot.set_axis_labels("", "")
 plt.xscale('log')
@@ -24,8 +24,19 @@ plt.yticks(fontsize=25)
 plt.tight_layout()
 plt.savefig('figures/figure_5_a.png')
 
+# plt.figure()
+# sns.scatterplot(x="rho", y="Theta", data=data)
+# sns.kdeplot(x="rho", y="Theta", data=data, cmap="viridis", hue="LSDs", fill=True, alpha=0.5, levels=20)
+# plt.xscale('log')
+# plt.ylim(0, 0.01)
+# plt.yticks([0, 0.005, 0.01])
+# plt.xticks(fontsize=25)
+# plt.yticks(fontsize=25)
+# plt.tight_layout()
+# plt.savefig('figures/figure_5_a_bis.png')
+
 plt.figure()
-plot = sns.lmplot(x="Theta", y="LSDs", data=data, scatter_kws={'s': 2.5, 'alpha': 0.75, 'color': 'grey'}, aspect=1.5,
+plot = sns.lmplot(x="Theta", y="LSDs", data=data, scatter_kws={'s': 5, 'alpha': 0.5, 'color': 'grey'}, aspect=1.5,
                   truncate=False)
 plot.set_axis_labels("", "")
 plt.xlim(0, 1)
@@ -37,7 +48,7 @@ plt.yticks(fontsize=25)
 plt.savefig('figures/figure_5_b.png')
 
 plt.figure()
-plot = sns.lmplot(x="Theta", y="LSDd", data=data, scatter_kws={'s': 2.5, 'alpha': 0.75, 'color': 'grey'}, aspect=1.5,
+plot = sns.lmplot(x="Theta", y="LSDd", data=data, scatter_kws={'s': 5, 'alpha': 0.5, 'color': 'grey'}, aspect=1.5,
                   truncate=False)
 plot.set_axis_labels("", "")
 plt.xlim(0, 1)
