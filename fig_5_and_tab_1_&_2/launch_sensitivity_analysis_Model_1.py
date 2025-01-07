@@ -14,7 +14,7 @@ if not os.path.exists(data_folder):
 # Specify the file name to save BRUTresults. You can run multiple files in parallel by updating the number in the file name.
 name_file = 'results_Model_1_X'
 # Set the total number of runs
-n_runs = 1000
+n_runs = 100000
 
 # Start measuring time
 start_time = time.time()
