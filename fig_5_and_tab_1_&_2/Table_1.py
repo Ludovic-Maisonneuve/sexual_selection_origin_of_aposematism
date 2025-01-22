@@ -6,7 +6,7 @@ from tabulate import tabulate
 list_parameters = ['gamma_cs1', 'gamma_cs2', 'gamma_cd1', 'gamma_cd2', 'betaD', 'betaN', 'betaL', 'betaE', 'l', 'rho',
                    'PD0', 'p']
 # List of variables
-list_vars = ['sf', 'df', 'sm', 'dm', 'LSDs', 'LSDd', 'Theta', 'P_killed_male', 'P_killed_female']
+list_vars = ['s', 'd', 'theta', 'P_killed']
 
 
 # Define a function to calculate the correlation coefficient between two variables
@@ -17,8 +17,6 @@ def get_r(cov_matrix, t1, t2):
 data = pd.read_csv('results/results_Model_1.csv')
 
 cov_matrix = data.cov()
-
-list_vars = ['s', 'd', 'theta', 'P_killed']
 
 list_cov_par = []
 

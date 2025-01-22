@@ -2,7 +2,6 @@ import csv
 
 import numpy as np
 
-
 def level_of_sexual_dimophism(trait_f, trait_m):
     trait_max = max(trait_f, trait_m)
     trait_min = min(trait_f, trait_m)
@@ -13,10 +12,10 @@ def level_of_sexual_dimophism(trait_f, trait_m):
 
 
 header = ['gamma_cs1', 'gamma_cs2', 'gamma_cd1', 'gamma_cd2', 'betaD', 'betaN', 'betaL', 'betaE', 'l', 'rho', 'PD0',
-          'p', 'R0', 'sf', 'df', 'sm', 'dm', 'LSDs', 'LSDd', 'Theta', 'P_killed_male', 'P_killed_female']
+          'p', 'sf', 'df', 'sm', 'dm', 'LSDs', 'LSDd', 'Theta', 'P_killed_male', 'P_killed_female']
 data = []
 
-list_file_name = ['results/BRUTresults/results_Model_2_' + str(i) for i in range(1, 7)]
+list_file_name = ['results/BRUTresults/results_Model_2_' + str(i) for i in range(1, 11)]
 # Adjust the range based on the number of results files you have
 
 for file_name in list_file_name:
@@ -79,7 +78,7 @@ for file_name in list_file_name:
             P_killed_female =1 - np.exp(-p * PDf * PAf * (1 - PEf))
 
             data.append(
-                [gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, R0, sf, df, sm,
+                [gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, sf, df, sm,
                  dm, LSDs, LSDd, theta, P_killed_male, P_killed_female])
 
     with open('results/results_Model_2.csv', 'w', encoding='UTF8', newline='') as f:

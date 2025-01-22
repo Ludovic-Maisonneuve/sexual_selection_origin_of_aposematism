@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     12220,        281]
-NotebookOptionsPosition[     11774,        266]
-NotebookOutlinePosition[     12174,        282]
-CellTagsIndexPosition[     12131,        279]
+NotebookDataLength[     17593,        406]
+NotebookOptionsPosition[     17150,        391]
+NotebookOutlinePosition[     17547,        407]
+CellTagsIndexPosition[     17504,        404]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -142,7 +142,7 @@ Cell[BoxData[
         RowBox[{"Define", " ", "mutation", " ", "matrix"}], "*)"}], 
        "\[IndentingNewLine]", 
        RowBox[{"G", "=", 
-        RowBox[{"0.001", " ", 
+        RowBox[{"0.01", " ", 
          RowBox[{"IdentityMatrix", "[", 
           RowBox[{"Length", "[", "S", "]"}], "]"}]}]}], ";", 
        "\[IndentingNewLine]", "\[IndentingNewLine]", 
@@ -199,6 +199,129 @@ Cell[BoxData[
            RowBox[{"10", "^", 
             RowBox[{"-", "6"}]}]}], "&"}], ",", "2", ",", "1000000"}], 
         "]"}]}]}], "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Function", " ", "to", " ", "iteratively", " ", "apply", " ", "selection",
+      " ", "gradients"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SelGradIterateFor", "[", 
+     RowBox[{"S_", ",", " ", "traits_", ",", " ", "params_", ",", " ", "N_"}],
+      "]"}], ":=", "\[IndentingNewLine]", 
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "vars", ",", "init", ",", "bounds", ",", "Sparams", ",", "G", ",", 
+        "myclip", ",", " ", "newval"}], "}"}], ",", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{"Extract", " ", "the", " ", "variable", " ", "names", " ", 
+        RowBox[{"(", "traits", ")"}], " ", "from", " ", "the", " ", "traits", 
+        " ", "list"}], "*)"}], "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"vars", "=", 
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"First", "[", "#", "]"}], "&"}], ",", " ", "traits"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Extract", " ", "the", " ", "initial", " ", "values", " ", "of", " ", 
+         "the", " ", "traits"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"init", "=", 
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"#", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], "&"}], ",", " ", "traits"}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Extract", " ", "the", " ", "upper", " ", "and", " ", "lower", " ", 
+         "bounds", " ", "for", " ", "each", " ", "trait"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"bounds", "=", 
+        RowBox[{"Map", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"#", "[", 
+            RowBox[{"[", 
+             RowBox[{"{", 
+              RowBox[{"3", ",", "4"}], "}"}], "]"}], "]"}], "&"}], ",", " ", 
+          "traits"}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Substitute", " ", "the", " ", "parameters", " ", "into", " ", "the", 
+         " ", "selection", " ", 
+         RowBox[{"gradient", "'"}], 
+         RowBox[{"S", "'"}], " ", "and", " ", "simplify"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"Sparams", "=", 
+        RowBox[{
+         RowBox[{"S", "/.", "params"}], "//", "Simplify"}]}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{"Define", " ", "mutation", " ", "matrix"}], "*)"}], 
+       "\[IndentingNewLine]", 
+       RowBox[{"G", "=", 
+        RowBox[{"0.01", " ", 
+         RowBox[{"IdentityMatrix", "[", 
+          RowBox[{"Length", "[", "S", "]"}], "]"}]}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Define", " ", "a", " ", "function", " ", "to", " ", "clip", " ", 
+         "values", " ", "within", " ", "the", " ", "defined", " ", "bounds"}],
+         "*)"}], "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"myclip", "[", 
+         RowBox[{"val_", ",", " ", "pos_"}], "]"}], ":=", " ", 
+        RowBox[{"Clip", "[", 
+         RowBox[{"val", ",", " ", 
+          RowBox[{"Flatten", "[", 
+           RowBox[{"bounds", "[", 
+            RowBox[{"[", "pos", "]"}], "]"}], "]"}]}], "]"}]}], ";", 
+       "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+        "Define", " ", "a", " ", "function", " ", "to", " ", "compute", " ", 
+         "the", " ", "new", " ", "trait", " ", "values", " ", "after", " ", 
+         "one", " ", "iteration", " ", "of", " ", "the", " ", "selection", 
+         " ", "gradients"}], "*)"}], "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"newval", "[", "val_", "]"}], ":=", " ", 
+        RowBox[{"MapIndexed", "[", 
+         RowBox[{"myclip", ",", " ", 
+          RowBox[{"val", "+", 
+           RowBox[{"G", ".", 
+            RowBox[{"(", 
+             RowBox[{"Sparams", "/.", 
+              RowBox[{"MakeRule", "[", 
+               RowBox[{"vars", ",", " ", "val"}], "]"}]}], ")"}]}]}]}], 
+         "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+       RowBox[{"(*", 
+        RowBox[{
+         RowBox[{
+         "Iterate", " ", "the", " ", "selection", " ", "gradient", " ", 
+          "update", " ", "until", " ", "the", " ", "difference", " ", 
+          "between", " ", "consecutive", " ", "trait", " ", "values", " ", 
+          "is", " ", "sufficiently", " ", "small", " ", 
+          RowBox[{"(", 
+           RowBox[{"10", "^", 
+            RowBox[{"-", "6"}]}], ")"}], " ", "or", " ", "a", " ", "maximum", 
+          " ", "of", " ", "1"}], ",", "000", ",", 
+         RowBox[{"000", " ", "iterations", " ", "is", " ", "reached"}]}], 
+        "*)"}], "\[IndentingNewLine]", 
+       RowBox[{"NestWhileList", "[", 
+        RowBox[{"newval", ",", "init", ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"EuclideanDistance", "[", 
+            RowBox[{"#1", ",", "#2"}], "]"}], ">", 
+           RowBox[{"-", "1"}]}], "&"}], ",", "2", ",", "N"}], "]"}]}]}], 
+     "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
    RowBox[{"(*", 
     RowBox[{
     "Function", " ", "to", " ", "obtain", " ", "the", " ", "final", " ", 
@@ -261,12 +384,14 @@ Cell[BoxData[
    3.9331686616530447`*^9, 3.9331686624548817`*^9}, {3.933168696076453*^9, 
    3.933168696496645*^9}, {3.934625491492836*^9, 3.9346255103549747`*^9}, {
    3.935726491317664*^9, 3.935726574435974*^9}, {3.935726674637085*^9, 
-   3.9357269159714537`*^9}},ExpressionUUID->"566f8f1a-1f53-4652-bdeb-\
-db47045c6e65"]
+   3.9357269159714537`*^9}, {3.944308863122807*^9, 3.9443089023004093`*^9}, {
+   3.945486848580044*^9, 3.945486851688431*^9}},
+ CellLabel->
+  "In[430]:=",ExpressionUUID->"566f8f1a-1f53-4652-bdeb-db47045c6e65"]
 },
 WindowSize->{1512, 831},
 WindowMargins->{{1676, Automatic}, {Automatic, 56}},
-FrontEndVersion->"13.0 pour Mac OS X ARM (64-bit) (December 2, 2021)",
+FrontEndVersion->"13.3 pour Mac OS X ARM (64-bit) (July 24, 2023)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"28078c1b-1575-44c9-8711-f4c6d233a0a0"
 ]
@@ -282,7 +407,7 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[558, 20, 396, 8, 35, "Text",ExpressionUUID->"da01c5df-23ff-43c2-8327-162bbcf20be2"],
-Cell[957, 30, 10813, 234, 1108, "Input",ExpressionUUID->"566f8f1a-1f53-4652-bdeb-db47045c6e65"]
+Cell[957, 30, 16189, 359, 1882, "Input",ExpressionUUID->"566f8f1a-1f53-4652-bdeb-db47045c6e65"]
 }
 ]
 *)

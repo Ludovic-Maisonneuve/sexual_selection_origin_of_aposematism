@@ -3,10 +3,10 @@ import csv
 import numpy as np
 
 header = ['gamma_cs1', 'gamma_cs2', 'gamma_cd1', 'gamma_cd2', 'betaD', 'betaN', 'betaL', 'betaE', 'l', 'rho', 'PD0',
-          'p', 'R0', 's', 'd', 'theta', 'P_killed']
+          'p', 's', 'd', 'theta', 'P_killed']
 data = []
 
-list_file_name = ['results/BRUTresults/results_Model_1_' + str(i) for i in range(1, 7)]
+list_file_name = ['results/BRUTresults/results_Model_1_' + str(i) for i in range(1, 11)]
 # Adjust the range based on the number of results files you have
 
 for file_name in list_file_name:
@@ -57,7 +57,7 @@ for file_name in list_file_name:
             P_killed = 1 - np.exp(-p * PD * PA * (1 - PE))
 
             data.append(
-                [gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, R0, s, d,
+                [gamma_cs1, gamma_cs2, gamma_cd1, gamma_cd2, betaD, betaN, betaL, betaE, l, rho, PD0, p, s, d,
                  theta, P_killed])
 
     with open('results/results_Model_1.csv', 'w', encoding='UTF8', newline='') as f:
