@@ -7,9 +7,10 @@ This repository contains scripts related to the preprint article by Maisonneuve 
 
 Contents:
 
-1. fig_1_to_4: Contains the necessary notebooks to generate Figures 1 through 4 as presented in the preprint.
+1. fig_1_to_4: Contains the necessary notebooks to generate Figures 1 through 4, A1 and A2 as presented in the preprint.
 - NoteBookToMakeFig1to4.nb: A Mathematica notebook that produces Figures 1–4 of the preprint.
 - numerical_functions.nb: Written by Arthur Weyna, this notebook contains functions that apply selection gradients iteratively to traits, enabling to simulate evolutionary dynamics. It is called by NoteBookToMakeFig1to4.nb.
+- data_IBM: A folder contains data obtained from simulations of the individual-based model
 
 2. fig_5_and_tab_1_&_2: Python Scripts for Figure 1 and Tables
 - launch_sensitivity_analysis_Model_X.py: Executes sensitivity analyses using Model X (where X=1 represents a model with sex-independent traits, and X=2 represents a model with sex-dependent traits). These analyses can be run multiple times in parallel by renaming the output files to store the data sequentially.
@@ -18,3 +19,13 @@ Contents:
 - Table_X.py: Produces Table X from the preprint.
 - functions.py: A helper file for launch_sensitivity_analysis_Model_X.py, containing functions to simulate evolutionary dynamics and save the results.
 
+3. IBM: Python Scripts to simulate the individual-based model
+- functions: A folder containing Python scripts to define functions for performing individual-based simulations, saving data, and plotting.  
+     - classes.py: Defines the classes used in the model.  
+     - dynamics.py: Defines functions to iterate the individual-based simulations.  
+     - save_and_open.py: Defines functions to save and open data.  
+     - visualize_data.py: Defines functions to plot data.  
+- simulations: A folder containing files that perform the simulations.
+	-l=X: A folder containing files that perform the simulations with lambda=X.
+       		- launch.py: Launches the simulation and saves the data.  
+       		- save_data_for_mathematica.py: Exports the data in a format compatible with the evolutionary_analyses.nb Mathematica notebook.
